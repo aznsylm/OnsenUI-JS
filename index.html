@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture Quote</title>
+
+    <!-- Onsen UI -->
+    <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+    <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+    <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <style>
+        #hasil {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 90vh;
+        }
+
+        #aktivitas {
+            font-size: 2em;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        #tipe {
+            background-color: crimson;
+            font-size: 24px;
+            font-weight: 600;
+            color: white;
+            padding: 8px 16px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <ons-page>
+        <ons-toolbar>
+            <div class="center">Capture Quote</div>
+            <div class="right">
+                <ons-toolbar-button>
+                    <a download id="cetak">📷</a>
+                </ons-toolbar-button>
+            </div>
+        </ons-toolbar>
+
+        <ons-fab position="bottom right" onclick="generateIdea()">
+            <ons-icon icon="md-plus"></ons-icon>
+        </ons-fab>
+
+        <div id="hasil">
+            <h1 id="aktivitas"></h1>
+            <p id="tipe"></p>
+        </div>
+    </ons-page>
+
+    <script>
+        async function generateIdea() {
+            const hasil = document.getElementById("hasil");
+            const aktivitas = document.getElementById("aktivitas");
+            const tipe = document.getElementById("tipe");
+            const cetak = document.getElementById("cetak");
+
+            const url = "https://www.boredapi.com/api/activity";
+            const response = await fetch(url);
+            const api = await response.json();
+            console.log(api);
+
+            aktivitas.textContent = api.activity;
+            tipe.textContent = api.type;
+
+            tipe.style.display = "block";
+
+            let count = 0;
+
+            cetak.addEventListener("click", function() {
+                count && location.reload();
+                
+                html2canvas(hasil).then(callback => {
+                    cetak.setAttribute("href", callback.toDataURL("image/png"));
+                    cetak.textContent = "📥";
+                    count = 1;
+                });
+            });
+        }
+    </script>
+</body>
+
+</html>
